@@ -65,6 +65,8 @@ Making tasks like selecting the best set of hyperparameters and evaluation a sin
 
 In all regression problems residual error analysis is fundamental to understand not only the accuracy of the model but, it also has valuable information about model fittness, interpretability, variance balance and the bias/variance structure of the model. The picture bellow is a graph of the prections against athe residual errors:
 
+![MLRp2.png](MLRp2.png)
+
 
 
 # License
