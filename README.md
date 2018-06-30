@@ -63,9 +63,11 @@ Making tasks like selecting the best set of hyperparameters and evaluation a sin
 
 # Conclusions
 
-In all regression problems residual error analysis is fundamental to understand not only the accuracy of the model but, it also has valuable information about model fittness, interpretability, variance balance and the bias/variance structure of the model. The picture bellow is a graph of the prections against athe residual errors:
+In all regression problems residual error analysis is fundamental to understand not only the accuracy of the model but, it also has valuable information about model fittness, interpretability, variance balance and the bias/variance structure of the model. The picture bellow is a graph of y against athe residual errors:
 
+![MLRp2.png](MLRp2.png)
 
+The image above shows how well fit is the regression is to the data but also, can be infered the there is no unbalance variance and the magnitud of the resiudal errors.
 
 # License
 
