@@ -57,7 +57,7 @@ df.columns
 
 df.printSchema()
 
-val df_reduced = df.drop($"Invoice/Item Number")
+val df_rdx = df.drop($"Invoice/Item Number")
                    .drop($"Date")
                    .drop("Store Name")
                    .drop($"Address")
@@ -75,91 +75,114 @@ val df_reduced = df.drop($"Invoice/Item Number")
                    .drop($"Volume Sold (Gallons)")
                    
 
-df.withColumn("Sale (Dollars)", regexp_replace($"Sale (Dollars)", "\\$+", " "))
+df_rdx.show(5)
 
-df.select(df("Sales(Dollars)").cast(FloatType))
+  df_rdx.printSchema()
 
-/*df.na.drop()*/
+  val df1=df_rdx.withColumn("Sale (Dollars)", regexp_replace($"Sale (Dollars)","\\$+", " "))
 
+  val df2=df1.withColumn("State Bottle Retail", regexp_replace($"State Bottle Retail","\\$+", " "))
 
-                   
-                   
- df_reduced.show(5) 
- 
+  val df3=df2.withColumn("Sale (Dollars)", $"Sale (Dollars)".cast(sql.types.DoubleType))
 
- val le1 =new StringIndexer()
+  val df4=df3.withColumn("State Bottle Retail", $"State Bottle Retail".cast(sql.types.DoubleType))
+
+  val df_preprocessed=df4.withColumnRenamed("Sale (Dollars)","label")
+
+  df_preprocessed.printSchema()
+
+  val le1 =new StringIndexer()
               .setInputCol("County")
               .setOutputCol("County_lb")
+              .setHandleInvalid("keep")
+              
               
   val le2 =new StringIndexer()
-              .setInputCol("Category")
-              .setOutputCol("Category_lb")              
+              .setInputCol("Category Name")
+              .setOutputCol("Category_Name_lb")
+              .setHandleInvalid("keep")
+              
  
-val le3 =new StringIndexer()
+  val le3 =new StringIndexer()
               .setInputCol("Item Description")
-              .setOutputCol("Item Description_lb")
+              .setOutputCol("Item_Description_lb")
+              .setHandleInvalid("keep")
               
-val enc1 = new OneHotEncoderEstimator()
-              .setInputCols(Array("County_lb","Category_lb","Item Description_lb"))
-              .setOutputCols(Array("CountyVec1", "CategoryVec2","Item_DescriptionVec3"))
+                    
+  val enc1 = new OneHotEncoderEstimator()
+              .setInputCols(Array("County_lb","Category_Name_lb","Item_Description_lb"))
+              .setOutputCols(Array("CountyVec1", "CategoryNameVec2","ItemDescriptionVec3"))
+                    
               
-             
-                          
               
-var assembler= new VectorAssembler()
-                   .setInputCols(Array("Store Number",
-                                        "County",
-                                        "Category Name",
+  val assembler= new VectorAssembler()
+                   .setInputCols(Array( "Store Number",
+                                        "CountyVec1", 
+                                        "CategoryNameVec2",
+                                        "ItemDescriptionVec3",
                                         "Vendor Number",
-                                        "Item Description",
                                         "Bottle Volume (ml)",
                                         "State Bottle Retail", 
                                         "Bottles Sold"))
-                     .setOutputCol("features")
+                    .setOutputCol("features")
 
-var lr= new LinearRegression()
+
+  val lr= new LinearRegression()
         .setFitIntercept(true)      
         .setStandardization(true)       
         .setTol(0.007)
-        .setMaxIter(300)        
+        .setMaxIter(500)        
         .setFeaturesCol("features")
         
-var pipeline = new Pipeline()
-                   .setStages(Array())
-  
-val reg_pararm= Array(0.001,0.1,1,10)
-
-val alpha = Array(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
-
-val loss_func =  Array("squaredError","huber")
-
-val solvers = Array("l-bfgs","normal")
         
-var paramGrid = new ParamGridBuilder()
-                    .addGrid(lr.regParam,reg_pararm)
+  val Costumed_Stages=Array(le1,le2,le3,enc1,assembler,lr)
+        
+  val pipeline = new Pipeline()
+                   .setStages(Costumed_Stages)
+  
+  val reg_param= Array(0.001,0.1,1,10)
+
+  val alpha = Array(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1)
+
+  val loss_func =  Array("squaredError")
+
+  val solvers = Array("l-bfgs","normal")
+        
+  val paramGrid = new ParamGridBuilder()
+                    .addGrid(lr.regParam,reg_param)
                     .addGrid(lr.elasticNetParam,alpha)
                     .addGrid(lr.loss,loss_func)
                     .addGrid(lr.solver,solvers)
                     .build()
   
 
-var r2Evaluator = new RegressionEvaluator()
+  val r2Evaluator = new RegressionEvaluator()
                       .setMetricName("r2")
+                      
+  val maeEvaluator = new RegressionEvaluator()
+                      .setMetricName("mae")
+                      
+  val mseEvaluator = new RegressionEvaluator()
+                      .setMetricName("mse")
+                 
   
-var cv = new CrossValidator()
+  val cv = new CrossValidator()
             .setEstimator(pipeline)
             .setEstimatorParamMaps(paramGrid)
             .setEvaluator(r2Evaluator)
 
-var Array(train, test) = df.randomSplit(weights=Array(.8, .2), seed=42)
+  val Array(train, test) = df_preprocessed.randomSplit(weights=Array(.8, .2), seed=42)
 
-var cvModel = cv.fit(train)
+  val cvModel = cv.fit(train)
 
-var predictions = cvModel.transform(test)
+  val predictions = cvModel.transform(test)
 
-r2Evaluator.evaluate(predictions)
+  println(r2Evaluator.evaluate(predictions))
 
-              
+  println(maeEvaluator.evaluate(predictions))
+
+  println(mseEvaluator.evaluate(predictions))
+ 
 
     
  
