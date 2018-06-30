@@ -1,4 +1,4 @@
-# Iowa Liquor Stores Problem on SparkML with Scala."
+# Iowa Liquor Stores Problem on SparkML with Scala.
 
 
 # Introduction
@@ -6,15 +6,23 @@
 The objective of this project is to advise a hypothetical owner of liquor stores chain where to open new stores and where the best opportunities in the state of Iowa liquor market are. The data is comprised of historical sales and location information. 
 
 # Data Wrangling and Data Munging
-The dataset has features like zip code, address, county and sales (the target variable). The information is self-explanatory and the gross majority features had just a few missing values. The first lines of code result are to convert the feature data type to a data type that can be input into a model. For instance, something like the following:
-```
-dataset_with_target['Sale (Dollars)'] = dataset_with_target['Sale (Dollars)'].replace({'\$':''}, regex=True)
+
+The dataset do not had many missing values and is professionally redacted but, in order to submit this information into a machine learning alghoritm it needs to be converted and arranged in a numeric format.
+```                                                                                                                                                                              val df1=df_rdx.withColumn("Sale (Dollars)", regexp_replace($"Sale (Dollars)","\\$+", " "))
+
+  val df2=df1.withColumn("State Bottle Retail", regexp_replace($"State Bottle Retail","\\$+", " "))
+
+  val df3=df2.withColumn("Sale (Dollars)", $"Sale (Dollars)".cast(sql.types.DoubleType))
+
+  val df4=df3.withColumn("State Bottle Retail", $"State Bottle Retail".cast(sql.types.DoubleType))
+
+  val df_preprocessed=df4.withColumnRenamed("Sale (Dollars)","label")
 ```
 
 At the core, preprocessing this dataset was mainly transforming the initial data types to a numeric form or converting measuring unit to a single unit to unified different presentations of the same physical variable, volume in this case.
 
 
-# Multivariate linear regression Model.
+# SparkML library .
 
 This statistical model has a proven record in making prediction on sales hence the reason it was chosen for the project. In layman terms the model used the correlation between the features and the target in order to make a prediction such that it minimized the MSE(mean square error).
 
