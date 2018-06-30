@@ -19,12 +19,11 @@ to process data as vectors. It sees all the row of the datset as a vector with a
 
   val df_preprocessed=df4.withColumnRenamed("Sale (Dollars)","label")
 ```
-After this step the data set is ready for more complex techniques as feature selection and engineering as well as further preprocessing.
+After this step the dataset is ready for more complex techniques as feature selection and engineering as well as further preprocessing.
 
-# SparkML library .
+# SparkML library.
 
-In contrast to R or Python, Scala uses the get/set paradigm to assigned parameters to an object. The SparkML library has to API one for RDD(Resilient Distributed Dataset) and for DATAFRAME, the newest one, which some expets considered to be the future of Spark. Although the SparkML by any standard, a capable machine learning library but, still need more development in certains area to be on pair with other packages as Python and R but, this is a challange due to Spark backbone on paraller computing and 
-cluster data distribution schema but something that for certain it will be tackle in the near future. The following code snippet is the initialization of a linear regression object, and the assigment of certain hyperparameters.
+In contrast to R or Python, Scala uses the get/set paradigm to assigned parameters to an object. The SparkML library has two APIs one for RDD(Resilient Distributed Dataset) and for DATAFRAME, the newest one, which some expets considered to be the future of Spark. Although the SparkML by any standard, is a capable machine learning library but, still need more development in certains area to be on pair with other packages such as Python or R but, this is a challange due to Spark backbone on paraller computing and cluster data distribution schema but something that for certain it will be tackle in the near future. The following code snippet is the initialization of a linear regression object, and the assigment of certain hyperparameters.
 ```
 val lr= new LinearRegression()
         .setFitIntercept(true)      
@@ -33,18 +32,18 @@ val lr= new LinearRegression()
         .setMaxIter(500)        
         .setFeaturesCol("features")
 ```
+The metrcis and evaluators used in my Python code yielded very similar results to those implemented on the Scala code, in essence are the same statistical variable. Python and R can be tools to prototyped models before deployment into a big data plataforms that uses Scala.
 
-The fitness of the model is evaluated using the R square metric which is a measure of how much of the variance in the target(sales) can be explained by the model. In other words, if the sample change, the random variations will affect the predictions but, if the model is well fitted those random variations will be miniscule and the model still will be able to make acceptable predictions. Of course, all models are wrong, but some are useful!  
 
-# Tuning a model with Scala
+# Tuning a model with Scala.
 
 ```
-val lr= new LinearRegression()
-        .setFitIntercept(true)      
-        .setStandardization(true)       
-        .setTol(0.007)
-        .setMaxIter(500)        
-        .setFeaturesCol("features")
+val paramGrid = new ParamGridBuilder()
+                    .addGrid(lr.regParam,reg_param)
+                    .addGrid(lr.elasticNetParam,alpha)
+                    .addGrid(lr.loss,loss_func)
+                    .addGrid(lr.solver,solvers)
+                    .build()
 ```
 
 # Conclusions
