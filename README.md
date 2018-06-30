@@ -67,7 +67,7 @@ In all regression problems residual error analysis is fundamental to understand 
 
 ![MLRp2.png](MLRp2.png)
 
-The image above shows how well fit is the regression is to the data but also, can be infered the there is no unbalance variance and the magnitud of the resiudal errors. Here is the Scala source code objecte [lr_model](/iowarliuorestoresproblem/src/com/salazaraiassociates/spark/lr_model.scala) or the Databricks notebool 
+The image above shows how well fit is the regression is to the data but also, can be infered the there is no unbalance variance and the magnitud of the resiudal errors. Here is the Scala source code object: [lr_model](/iowarliuorestoresproblem/src/com/salazaraiassociates/spark/lr_model.scala) or the Databricks notebool [Iowa_Liquor_Stores_Problem_on_SparkML](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/5557002591186765/134647401198801/211402702664379/latest.html)
 
 # License
 
