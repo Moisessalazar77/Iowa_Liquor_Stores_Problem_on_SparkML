@@ -67,7 +67,7 @@ In all regression problems residual error analysis is fundamental to understand 
 
 ![MLRp2.png](MLRp2.png)
 
-The image above shows how well fit is the regression is to the data but also, can be infered the there is no unbalance variance and the magnitud of the resiudal errors.
+The image above shows how well fit is the regression is to the data but also, can be infered the there is no unbalance variance and the magnitud of the resiudal errors. Here is the Scala source code objecte [lr_model](/iowarliuorestoresproblem/src/com/salazaraiassociates/spark/lr_model.scala) or the Databricks notebool 
 
 # License
 
