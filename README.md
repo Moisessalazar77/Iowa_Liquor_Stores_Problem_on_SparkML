@@ -32,10 +32,17 @@ val lr= new LinearRegression()
         .setMaxIter(500)        
         .setFeaturesCol("features")
 ```
-The metrcis and evaluators used in my Python code yielded very similar results to those implemented on the Scala code, in essence are the same statistical variable. Python and R can be tools to prototyped models before deployment into a big data plataforms that uses Scala.
+The metrcis and evaluators used in my Python code yielded very similar results to those implemented on the Scala code, in essence are the same statistical variables. Python and R can be tools to prototyped models before deployment into a big data plataforms that uses Scala.
 
 
 # Tuning a model with Scala.
+
+The model is embedded in a pipeline object which simplyfied the tuning and cross validation of the model.
+```
+ val pipeline = new Pipeline()
+                   .setStages(Costumed_Stages)
+```
+The only significant difference between tuning a model in Scala to tuning a model in a package like R is the method build() which will generated the grid of hyperparameters for the tuning but if is not called the grid will be created but not excuted.
 
 ```
 val paramGrid = new ParamGridBuilder()
@@ -45,14 +52,20 @@ val paramGrid = new ParamGridBuilder()
                     .addGrid(lr.solver,solvers)
                     .build()
 ```
+In SparkML cross validation and hyperparameters tuning are integrated.
+``` 
+val cv = new CrossValidator()
+            .setEstimator(pipeline)
+            .setEstimatorParamMaps(paramGrid)
+            .setEvaluator(r2Evaluator)
+```
+Making tasks like selecting the best set of hyperparameters and evaluation a single line of code action.
 
 # Conclusions
 
-The Variables city and price alone can explain the 20% of the variance, making those features the more statistically significant.
+In all regression problems residual error analysis is fundamental to understand not only the accuracy of the model but, it also has valuable information about model fittness, interpretability, variance balance and the bias/variance structure of the model. The picture bellow is a graph of the prections against athe residual errors:
 
-The MAE (Median Absolute error) is close to 1.7 thousand dollars with is small in comparison with the mean of target.
 
-As expected the big cities like Des Moines are at the top but the best opportunities are on the upcoming markets like Ankeny witch population has duplicated very recently.
 
 # License
 
