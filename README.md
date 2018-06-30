@@ -7,7 +7,8 @@ The objective of this project is to advise a hypothetical owner of liquor stores
 
 # Data Wrangling and Data Munging
 
-The dataset do not had many missing values and is professionally redacted but, in order to submit this information into a machine learning alghoritm it needs to be converted and arranged in a numeric format.
+The dataset do not had many missing values and is professionally redacted but, in order to submit this information into a machine learning alghoritm it needs to be converted and arranged in a numeric format. A peculiarty to spark is that needs to
+to process data as vectors. It sees all the row of the datset as a vector with an associated label hence, the need to change the name of the target variable column to "label". The following snippet of the codes is an examplot of converting the field expressed as dollar to a numeric entry, firt the dollar sign must be remove and then the character strinbg coverted to a double precision number. 
 ```                                                                                                                                                                              val df1=df_rdx.withColumn("Sale (Dollars)", regexp_replace($"Sale (Dollars)","\\$+", " "))
 
   val df2=df1.withColumn("State Bottle Retail", regexp_replace($"State Bottle Retail","\\$+", " "))
@@ -18,15 +19,33 @@ The dataset do not had many missing values and is professionally redacted but, i
 
   val df_preprocessed=df4.withColumnRenamed("Sale (Dollars)","label")
 ```
-
-At the core, preprocessing this dataset was mainly transforming the initial data types to a numeric form or converting measuring unit to a single unit to unified different presentations of the same physical variable, volume in this case.
-
+After this step the data set is ready for more complex techniques as feature selection and engineering as well as further preprocessing.
 
 # SparkML library .
 
-This statistical model has a proven record in making prediction on sales hence the reason it was chosen for the project. In layman terms the model used the correlation between the features and the target in order to make a prediction such that it minimized the MSE(mean square error).
+In contrast to R or Python, Scala uses the get/set paradigm to assigned parameters to an object. The SparkML library has to API one for RDD(Resilient Distributed Dataset) and for DATAFRAME, the newest one, which some expets considered to be the future of Spark. Although the SparkML by any standard, a capable machine learning library but, still need more development in certains area to be on pair with other packages as Python and R but, this is a challange due to Spark backbone on paraller computing and 
+cluster data distribution schema but something that for certain it will be tackle in the near future. The following code snippet is the initialization of a linear regression object, and the assigment of certain hyperparameters.
+```
+val lr= new LinearRegression()
+        .setFitIntercept(true)      
+        .setStandardization(true)       
+        .setTol(0.007)
+        .setMaxIter(500)        
+        .setFeaturesCol("features")
+```
 
 The fitness of the model is evaluated using the R square metric which is a measure of how much of the variance in the target(sales) can be explained by the model. In other words, if the sample change, the random variations will affect the predictions but, if the model is well fitted those random variations will be miniscule and the model still will be able to make acceptable predictions. Of course, all models are wrong, but some are useful!  
+
+# Tuning a model with Scala
+
+```
+val lr= new LinearRegression()
+        .setFitIntercept(true)      
+        .setStandardization(true)       
+        .setTol(0.007)
+        .setMaxIter(500)        
+        .setFeaturesCol("features")
+```
 
 # Conclusions
 
